@@ -1,0 +1,6 @@
+FROM credit_quotient-base
+
+COPY prisma /app/prisma
+RUN prisma generate --schema=prisma/schema.prisma
+COPY gateway /app/gateway
+COPY scripts /app/scripts

@@ -1,0 +1,5 @@
+FROM credit_quotient-base
+
+COPY prisma /app/prisma
+RUN prisma generate --schema=prisma/schema.prisma
+COPY worker /app/worker

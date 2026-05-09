@@ -1,0 +1,116 @@
+services:
+  base:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.base
+    image: credit_quotient-base
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: creditquotient
+      POSTGRES_USER: cq
+      POSTGRES_PASSWORD: cq
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cq -d creditquotient"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  gateway:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gateway
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://cq:cq@postgres:5432/creditquotient
+      REDIS_URL: redis://redis:6379/0
+      REDIS_RESULT_URL: redis://redis:6379/1
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-secret}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      STORAGE_ROOT: /app/storage/private
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-100}
+      SECURE_COOKIES: ${SECURE_COOKIES:-false}
+    ports:
+      - "8000:8000"
+    volumes:
+      - private_storage:/app/storage/private
+    depends_on:
+      base:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "prisma generate --schema=/app/prisma/schema.prisma &&
+             prisma db push --schema=/app/prisma/schema.prisma &&
+             uvicorn gateway.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://cq:cq@postgres:5432/creditquotient
+      REDIS_URL: redis://redis:6379/0
+      REDIS_RESULT_URL: redis://redis:6379/1
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      STORAGE_ROOT: /app/storage/private
+    depends_on:
+      base:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "prisma generate --schema=/app/prisma/schema.prisma &&
+             celery -A worker.queue.celery_app.celery_app worker --loglevel=INFO --concurrency=1"
+    volumes:
+      - private_storage:/app/storage/private
+
+  seed:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.gateway
+    profiles: ["seed"]
+    environment:
+      DATABASE_URL: postgresql://cq:cq@postgres:5432/creditquotient
+      REDIS_URL: redis://redis:6379/0
+      REDIS_RESULT_URL: redis://redis:6379/1
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-long-random-secret}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      STORAGE_ROOT: /app/storage/private
+      SECURE_COOKIES: ${SECURE_COOKIES:-false}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "prisma generate --schema=/app/prisma/schema.prisma &&
+             prisma db push --schema=/app/prisma/schema.prisma &&
+             python /app/scripts/seed_demo.py"
+    volumes:
+      - private_storage:/app/storage/private
+
+volumes:
+  postgres_data:
+  private_storage:
