@@ -147,27 +147,6 @@ export default function Page() {
   return (
     <div style={{ background: BG, color: TEXT, fontFamily: "'Montserrat', sans-serif" }}>
 
-      {/* NAV */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: BG, borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 1.5rem" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-0.03em", color: DARK }}>Credora</span>
-          <div style={{ display: "flex", gap: "0.5rem" }}>
-            <button
-              onClick={() => router.push("/login")}
-              style={{ background: "rgba(0,0,0,0.05)", color: TEXT, fontSize: "0.88rem", fontWeight: 500, padding: "0.5rem 1.1rem", borderRadius: 8, border: "1px solid rgba(0,0,0,0.13)", cursor: "pointer", transition: `background 0.15s ${EASE}` }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.1)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.05)"; }}
-            >Log in</button>
-            <button
-              onClick={() => router.push("/signup")}
-              style={{ background: DARK, color: "#fff", fontSize: "0.88rem", fontWeight: 600, padding: "0.5rem 1.1rem", borderRadius: 8, border: "none", cursor: "pointer", transition: `transform 0.15s ${EASE}, box-shadow 0.15s ${EASE}` }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 14px rgba(11,18,32,0.25)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
-            >Get started</button>
-          </div>
-        </div>
-      </nav>
-
       {/* HERO */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "6rem 1.5rem 3rem" }}>
         <div className="anim-fade" style={{ animationDelay: "0.05s", fontSize: "0.88rem", fontWeight: 600, color: TEXT2, marginBottom: "1.4rem" }}>
