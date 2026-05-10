@@ -9,7 +9,6 @@ import type { InvestigationCase } from "../../../types";
 
 const TEXT_MAIN = "#0B1220";
 const TEXT_MUTED = "#2c4a3e";
-const ACCENT = "#0B1220";
 const TEAL = "#28ebc0";
 const BORDER = "rgba(0,0,0,0.08)";
 
@@ -18,15 +17,6 @@ export default function CasesPage() {
   useEffect(() => { api.cases().then(setCases).catch(() => null); }, []);
   return (
     <div style={{ padding: "1rem", width: "100%" }}>
-      {/* Page header */}
-      <div style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: TEAL, marginBottom: "0.25rem" }}>
-          Investigation Queue
-        </div>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, color: TEXT_MAIN, margin: "0 0 0.25rem 0", letterSpacing: "-0.02em" }}>Cases</h1>
-        <p style={{ color: TEXT_MUTED, margin: 0, fontSize: "0.85rem" }}>Active fraud, dispute, KYC, and repayment investigations.</p>
-      </div>
-
       {/* Cases grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1rem" }}>
         {cases.map((item) => (

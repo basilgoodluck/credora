@@ -17,15 +17,7 @@ export default function ReportsPage() {
   useEffect(() => { api.dashboard().then(setDashboard).catch(() => null); }, []);
   return (
     <div style={{ padding: "1rem", width: "100%" }}>
-      {/* Page header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
-        <div>
-          <div style={{ fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: ACCENT, marginBottom: "0.25rem" }}>
-            Lender-Ready Output
-          </div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 600, color: TEXT_MAIN, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>Reports</h1>
-          <p style={{ color: TEXT_MUTED, margin: 0, fontSize: "0.85rem" }}>Credibility summaries, risk memos, and evidence-backed recommendations.</p>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1.5rem" }}>
         <Button variant="primary">Export report</Button>
       </div>
 
@@ -38,7 +30,7 @@ export default function ReportsPage() {
               <Badge tone="good">Ready</Badge>
             </div>
             <p style={{ fontSize: "0.8rem", color: TEXT_MUTED, lineHeight: 1.5, marginBottom: "0.75rem" }}>
-              {idx === 0 ? dashboard?.lender_readiness : "Generated from uploaded evidence, case history, and score snapshots."}
+              {idx === 0 ? (dashboard?.lender_readiness ?? "") : "Generated from uploaded evidence, case history, and score snapshots."}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", borderTop: `1px solid ${BORDER}`, paddingTop: "0.6rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

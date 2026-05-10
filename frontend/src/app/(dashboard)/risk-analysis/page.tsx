@@ -20,31 +20,23 @@ export default function RiskAnalysisPage() {
   const highRisk = cases.filter((item) => item.risk_score >= 70);
   return (
     <div style={{ padding: "1rem", width: "100%" }}>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: ACCENT, marginBottom: "0.25rem" }}>
-          Risk Intelligence
-        </div>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, color: TEXT_MAIN, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>Risk analysis</h1>
-        <p style={{ color: TEXT_MUTED, margin: 0, fontSize: "0.85rem" }}>Fraud signals, evidence confidence, and behavioral anomalies.</p>
-      </div>
-
       {/* KPI cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
         <Card style={{ background: "#fff", padding: "0.8rem" }}>
           <div style={{ fontSize: "0.75rem", fontWeight: 500, color: TEXT_MUTED, cursor: "help" }} title="Overall fraud probability based on flagged anomalies">Fraud risk</div>
-          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>{dashboard ? `${dashboard.flagged_anomalies.length * 12}%` : "38%"}</strong>
+          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>{dashboard ? `${dashboard.flagged_anomalies.length * 12}%` : "0%"}</strong>
         </Card>
         <Card style={{ background: "#fff", padding: "0.8rem" }}>
           <div style={{ fontSize: "0.75rem", fontWeight: 500, color: TEXT_MUTED, cursor: "help" }} title="Cases with risk score ≥ 70">High-risk cases</div>
-          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>{highRisk.length || 5}</strong>
+          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>{highRisk.length}</strong>
         </Card>
         <Card style={{ background: "#fff", padding: "0.8rem" }}>
           <div style={{ fontSize: "0.75rem", fontWeight: 500, color: TEXT_MUTED, cursor: "help" }} title="Confidence in extracted financial data">Data confidence</div>
-          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>82%</strong>
+          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>0%</strong>
         </Card>
         <Card style={{ background: "#fff", padding: "0.8rem" }}>
           <div style={{ fontSize: "0.75rem", fontWeight: 500, color: TEXT_MUTED, cursor: "help" }} title="Missing months in income timeline">Timeline gaps</div>
-          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>3</strong>
+          <strong style={{ fontSize: "1.4rem", fontWeight: 600, color: TEXT_MAIN }}>0</strong>
         </Card>
       </div>
 
@@ -60,7 +52,7 @@ export default function RiskAnalysisPage() {
           </div>
           <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.25rem" }}>
             {["Income", "Repayment", "Consistency", "Liquidity", "Growth", "Stability"].map((label, i) => (
-              <div key={i} style={{ flex: 1, textAlign: "center", fontSize: "0.65rem", color: TEXT_MUTED }}>{label.slice(0,4)}</div>
+              <div key={i} style={{ flex: 1, textAlign: "center", fontSize: "0.65rem", color: TEXT_MUTED }}>{label.slice(0, 4)}</div>
             ))}
           </div>
         </Card>

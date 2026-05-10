@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   FaTimes,
   FaFileAlt,
@@ -14,7 +15,7 @@ import {
   FaShareAlt,
   FaIdCard,
   FaGlobe,
-  FaCheck
+  FaCheck,
 } from "react-icons/fa";
 
 const AMBER = "#FFB020";
@@ -71,23 +72,23 @@ const problems = [
 ];
 
 const evidenceItems = [
-  { icon: <FaFileAlt size={15} />, name: "Bank statement PDF",        conf: 1.0  },
-  { icon: <FaComment size={15} />, name: "Bank SMS alert",            conf: 0.9  },
-  { icon: <FaUsers size={15} />,   name: "Cooperative passbook",      conf: 0.8  },
-  { icon: <FaPhoneAlt size={15} />, name: "OPay / Palmpay screenshot", conf: 0.8  },
-  { icon: <FaComment size={15} />, name: "WhatsApp payment paste",    conf: 0.7  },
-  { icon: <FaReceipt size={15} />, name: "Teller deposit slip",       conf: 0.6  },
-  { icon: <FaPen size={15} />,     name: "Handwritten receipt",       conf: 0.5  },
-  { icon: <FaKey size={15} />,     name: "Manual text entry",         conf: 0.3  },
+  { icon: <FaFileAlt size={15} />, name: "Bank statement PDF",         conf: 1.0 },
+  { icon: <FaComment size={15} />, name: "Bank SMS alert",             conf: 0.9 },
+  { icon: <FaUsers size={15} />,   name: "Cooperative passbook",       conf: 0.8 },
+  { icon: <FaPhoneAlt size={15} />, name: "OPay / Palmpay screenshot", conf: 0.8 },
+  { icon: <FaComment size={15} />, name: "WhatsApp payment paste",     conf: 0.7 },
+  { icon: <FaReceipt size={15} />, name: "Teller deposit slip",        conf: 0.6 },
+  { icon: <FaPen size={15} />,     name: "Handwritten receipt",        conf: 0.5 },
+  { icon: <FaKey size={15} />,     name: "Manual text entry",          conf: 0.3 },
 ];
 
 const pipeSteps = [
-  { n: "01", t: "Ingest",    d: "Any format accepted PDF, image, plain text, CSV, raw SMS export.",                                   lit: false },
-  { n: "02", t: "Extract",   d: "AI agents parse every financial event from unstructured content.",                                      lit: true  },
-  { n: "03", t: "Normalise", d: "Dates, amounts and currencies unified into one consistent schema.",                                     lit: false },
-  { n: "04", t: "Verify",    d: "Sources cross-referenced. Conflicts flagged. Fraud signals surfaced.",                                  lit: true  },
-  { n: "05", t: "Score",     d: "Weighted signals produce a transparent, fully explainable credit score.",                               lit: true  },
-  { n: "06", t: "Report",    d: "Lenders receive a structured, auditable report they can act on immediately.",                          lit: false },
+  { n: "01", t: "Ingest",    d: "Any format accepted PDF, image, plain text, CSV, raw SMS export.",                       lit: false },
+  { n: "02", t: "Extract",   d: "AI agents parse every financial event from unstructured content.",                        lit: true  },
+  { n: "03", t: "Normalise", d: "Dates, amounts and currencies unified into one consistent schema.",                       lit: false },
+  { n: "04", t: "Verify",    d: "Sources cross-referenced. Conflicts flagged. Fraud signals surfaced.",                    lit: true  },
+  { n: "05", t: "Score",     d: "Weighted signals produce a transparent, fully explainable credit score.",                 lit: true  },
+  { n: "06", t: "Report",    d: "Lenders receive a structured, auditable report they can act on immediately.",             lit: false },
 ];
 
 const scoreBars = [
@@ -141,8 +142,31 @@ const differentiators = [
 
 /* PAGE */
 export default function Page() {
+  const router = useRouter();
+
   return (
     <div style={{ background: BG, color: TEXT, fontFamily: "'Montserrat', sans-serif" }}>
+
+      {/* NAV */}
+      <nav style={{ position: "sticky", top: 0, zIndex: 100, background: BG, borderBottom: "1px solid rgba(0,0,0,0.08)", padding: "0 1.5rem" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-0.03em", color: DARK }}>Credora</span>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              onClick={() => router.push("/login")}
+              style={{ background: "rgba(0,0,0,0.05)", color: TEXT, fontSize: "0.88rem", fontWeight: 500, padding: "0.5rem 1.1rem", borderRadius: 8, border: "1px solid rgba(0,0,0,0.13)", cursor: "pointer", transition: `background 0.15s ${EASE}` }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.1)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.05)"; }}
+            >Log in</button>
+            <button
+              onClick={() => router.push("/signup")}
+              style={{ background: DARK, color: "#fff", fontSize: "0.88rem", fontWeight: 600, padding: "0.5rem 1.1rem", borderRadius: 8, border: "none", cursor: "pointer", transition: `transform 0.15s ${EASE}, box-shadow 0.15s ${EASE}` }}
+              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 14px rgba(11,18,32,0.25)"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
+            >Get started</button>
+          </div>
+        </div>
+      </nav>
 
       {/* HERO */}
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "6rem 1.5rem 3rem" }}>
@@ -158,15 +182,17 @@ export default function Page() {
         </p>
         <div className="anim-fade" style={{ animationDelay: "0.35s", display: "flex", gap: "0.75rem" }}>
           <button
-            style={{ background: DARK, color: "#fff", fontSize: "0.95rem", fontWeight: 600, padding: "0.75rem 1.5rem", borderRadius: 10, transition: `transform 0.18s ${EASE}, box-shadow 0.18s ${EASE}` }}
+            onClick={() => router.push("/signup")}
+            style={{ background: DARK, color: "#fff", fontSize: "0.95rem", fontWeight: 600, padding: "0.75rem 1.5rem", borderRadius: 10, border: "none", cursor: "pointer", transition: `transform 0.18s ${EASE}, box-shadow 0.18s ${EASE}` }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 24px rgba(11,18,32,0.28)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
-          >See the demo</button>
+          >Get started</button>
           <button
-            style={{ background: "rgba(0,0,0,0.05)", color: TEXT, fontSize: "0.95rem", fontWeight: 500, padding: "0.75rem 1.5rem", borderRadius: 10, border: "1px solid rgba(0,0,0,0.13)", transition: `background 0.18s ${EASE}` }}
+            onClick={() => router.push("/login")}
+            style={{ background: "rgba(0,0,0,0.05)", color: TEXT, fontSize: "0.95rem", fontWeight: 500, padding: "0.75rem 1.5rem", borderRadius: 10, border: "1px solid rgba(0,0,0,0.13)", cursor: "pointer", transition: `background 0.18s ${EASE}` }}
             onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.09)"; }}
             onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.05)"; }}
-          >How it works</button>
+          >Log in</button>
         </div>
       </div>
 
@@ -244,14 +270,13 @@ export default function Page() {
             </p>
           </Reveal>
 
-          {/* Step 1: Evidence sources */}
           <Reveal>
             <div style={{ marginBottom: "3rem" }}>
               <div style={{ fontSize: "0.82rem", fontWeight: 700, color: TEXT2, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
                 Accepted evidence sources
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.75rem" }}>
-                {evidenceItems.map((e, i) => (
+                {evidenceItems.map((e) => (
                   <div
                     key={e.name}
                     style={{ background: "rgba(0,0,0,0.05)", border: "1px solid rgba(0,0,0,0.13)", borderRadius: 12, padding: "1rem", display: "flex", flexDirection: "column", gap: "0.6rem", transition: `background 0.18s ${EASE}, transform 0.18s ${EASE}` }}
@@ -265,7 +290,7 @@ export default function Page() {
                       <div style={{ fontSize: "0.92rem", fontWeight: 600, color: TEXT, lineHeight: 1.3, marginBottom: 3 }}>{e.name}</div>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <div style={{ flex: 1, height: 4, borderRadius: 99, background: "rgba(0,0,0,0.1)", overflow: "hidden" }}>
-                          <div style={{ width: `${e.conf * 100}%`, height: "100%", borderRadius: 99, background: e.conf >= 0.8 ? "#1a9c6b" : e.conf >= 0.5 ? AMBER : "rgba(0,0,0,0.25)", transition: "width 0.4s ease" }} />
+                          <div style={{ width: `${e.conf * 100}%`, height: "100%", borderRadius: 99, background: e.conf >= 0.8 ? "#1a9c6b" : e.conf >= 0.5 ? AMBER : "rgba(0,0,0,0.25)" }} />
                         </div>
                         <span style={{ fontSize: "0.8rem", color: TEXT2, fontWeight: 600, flexShrink: 0 }}>{e.conf.toFixed(1)}</span>
                       </div>
@@ -276,7 +301,6 @@ export default function Page() {
             </div>
           </Reveal>
 
-          {/* Step 2: Pipeline */}
           <Reveal delay={60}>
             <div style={{ marginBottom: "3rem" }}>
               <div style={{ fontSize: "0.82rem", fontWeight: 700, color: TEXT2, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
@@ -290,28 +314,20 @@ export default function Page() {
                     onMouseEnter={e => { if (!s.lit) (e.currentTarget as HTMLDivElement).style.background = "rgba(0,0,0,0.05)"; }}
                     onMouseLeave={e => { if (!s.lit) (e.currentTarget as HTMLDivElement).style.background = "transparent"; }}
                   >
-                    <div style={{ fontSize: "1.3rem", fontWeight: 800, color: s.lit ? AMBER : "rgba(0,0,0,0.15)", marginBottom: "0.5rem", lineHeight: 1 }}>
-                      {s.n}
-                    </div>
-                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: s.lit ? "#fff" : TEXT, marginBottom: "0.4rem", letterSpacing: "-0.01em" }}>
-                      {s.t}
-                    </div>
-                    <p style={{ fontSize: "0.82rem", color: s.lit ? "rgba(255,255,255,0.5)" : TEXT2, lineHeight: 1.55, fontWeight: 400 }}>
-                      {s.d}
-                    </p>
+                    <div style={{ fontSize: "1.3rem", fontWeight: 800, color: s.lit ? AMBER : "rgba(0,0,0,0.15)", marginBottom: "0.5rem", lineHeight: 1 }}>{s.n}</div>
+                    <div style={{ fontSize: "0.95rem", fontWeight: 700, color: s.lit ? "#fff" : TEXT, marginBottom: "0.4rem", letterSpacing: "-0.01em" }}>{s.t}</div>
+                    <p style={{ fontSize: "0.82rem", color: s.lit ? "rgba(255,255,255,0.5)" : TEXT2, lineHeight: 1.55, fontWeight: 400 }}>{s.d}</p>
                   </div>
                 ))}
               </div>
             </div>
           </Reveal>
 
-          {/* Step 3: Output cards */}
           <Reveal delay={120}>
             <div style={{ fontSize: "0.82rem", fontWeight: 700, color: TEXT2, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: "1rem" }}>
               Output the Credora profile
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-              {/* Score breakdown */}
               <div style={{ background: DARK, borderRadius: 16, border: "1px solid rgba(255,255,255,0.06)", padding: "1.75rem" }}>
                 <div style={{ fontSize: "0.88rem", fontWeight: 700, color: AMBER, marginBottom: "0.25rem" }}>Signal breakdown</div>
                 <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.4)", marginBottom: "1.5rem" }}>Amaka · NGN-00412</div>
@@ -333,8 +349,6 @@ export default function Page() {
                   <strong style={{ color: "rgba(255,255,255,0.75)", fontWeight: 600 }}>Recommended: ₦75,000 over 90 days.</strong>
                 </p>
               </div>
-
-              {/* Trajectory */}
               <div style={{ background: DARK, borderRadius: 16, border: "1px solid rgba(255,255,255,0.06)", padding: "1.75rem" }}>
                 <div style={{ fontSize: "0.88rem", fontWeight: 700, color: AMBER, marginBottom: "0.25rem" }}>Score trajectory</div>
                 <div style={{ fontSize: "0.82rem", color: "rgba(255,255,255,0.4)", marginBottom: "1.5rem" }}>The profile grows with every new piece of evidence</div>
@@ -397,11 +411,20 @@ export default function Page() {
             <p style={{ fontSize: "1.05rem", color: TEXT2, marginBottom: "2rem", fontWeight: 400 }}>
               Built for scale. Designed to last.
             </p>
-            <button
-              style={{ background: DARK, color: "#fff", fontSize: "0.95rem", fontWeight: 600, padding: "0.75rem 1.5rem", borderRadius: 10, transition: `transform 0.18s ${EASE}, box-shadow 0.18s ${EASE}` }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 24px rgba(11,18,32,0.28)"; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
-            >See the demo</button>
+            <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
+              <button
+                onClick={() => router.push("/signup")}
+                style={{ background: DARK, color: "#fff", fontSize: "0.95rem", fontWeight: 600, padding: "0.75rem 1.5rem", borderRadius: 10, border: "none", cursor: "pointer", transition: `transform 0.18s ${EASE}, box-shadow 0.18s ${EASE}` }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-2px)"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 8px 24px rgba(11,18,32,0.28)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.transform = "none"; (e.currentTarget as HTMLButtonElement).style.boxShadow = "none"; }}
+              >Get started</button>
+              <button
+                onClick={() => router.push("/login")}
+                style={{ background: "rgba(0,0,0,0.05)", color: TEXT, fontSize: "0.95rem", fontWeight: 500, padding: "0.75rem 1.5rem", borderRadius: 10, border: "1px solid rgba(0,0,0,0.13)", cursor: "pointer", transition: `background 0.18s ${EASE}` }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.09)"; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = "rgba(0,0,0,0.05)"; }}
+              >Log in</button>
+            </div>
           </Reveal>
         </div>
       </section>

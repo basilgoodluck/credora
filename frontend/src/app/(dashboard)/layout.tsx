@@ -24,7 +24,6 @@ const nav = [
   { label: "Upload Evidence", href: "/upload",        icon: MdCloudUpload },
   { label: "Risk Analysis",   href: "/risk-analysis", icon: FaExclamationTriangle },
   { label: "Reports",         href: "/reports",       icon: FaChartBar },
-  { label: "Users",           href: "/users",         icon: FaUsers },
   { label: "Settings",        href: "/settings",      icon: FaCog },
 ];
 

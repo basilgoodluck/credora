@@ -40,14 +40,6 @@ export default function UploadPage() {
 
   return (
     <div style={{ padding: "1rem", width: "100%" }}>
-      <div style={{ marginBottom: "1.5rem" }}>
-        <div style={{ fontSize: "0.7rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: ACCENT, marginBottom: "0.25rem" }}>
-          Structured Evidence Intake
-        </div>
-        <h1 style={{ fontSize: "1.5rem", fontWeight: 600, color: TEXT_MAIN, margin: "0 0 0.25rem", letterSpacing: "-0.02em" }}>Upload evidence</h1>
-        <p style={{ color: TEXT_MUTED, margin: 0, fontSize: "0.85rem" }}>Upload images, documents, spreadsheets, video, audio, and other supported binary evidence.</p>
-      </div>
-
       <form onSubmit={submit} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
         {/* Left column – upload form */}
         <Card style={{ background: "#fff", display: "flex", flexDirection: "column", gap: "1rem" }}>
