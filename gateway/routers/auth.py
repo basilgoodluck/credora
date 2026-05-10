@@ -75,9 +75,11 @@ async def _issue_session(user_id: str, response: Response, request: Request, tru
             "expiresAt": expires_at,
         }
     )
-    access = create_jwt(user_id=user_id, token_type="access", expires_delta=timedelta(minutes=settings.access_token_minutes))
+    # Access token expires in 3 hours (180 minutes) instead of short default
+    access_expires = timedelta(minutes=180)
+    access = create_jwt(user_id=user_id, token_type="access", expires_delta=access_expires)
     refresh_jwt = create_jwt(user_id=user_id, token_type="refresh", expires_delta=timedelta(days=settings.refresh_token_days), jti=session.id)
-    _set_cookie(response, "access_token", access, settings.access_token_minutes * 60)
+    _set_cookie(response, "access_token", access, int(access_expires.total_seconds()))
     _set_cookie(response, "refresh_token", f"{session.id}.{refresh}.{refresh_jwt}", settings.refresh_token_days * 24 * 60 * 60)
 
 
@@ -91,7 +93,8 @@ async def _create_otp(phone_number: str, purpose: str, user_id: str | None, *, e
     if enforce_cooldown and active and active.resendAvailableAt > now:
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail="Please wait before requesting another code")
 
-    otp = f"{random.randint(0, 999999):06d}"
+    # DEMO: Hardcoded OTP for all requests
+    otp = "123456"
     await db.otpchallenge.create(
         data={
             "userId": user_id,
@@ -194,8 +197,10 @@ async def refresh(request: Request, response: Response) -> OkResponse:
     session = await db.devicesession.find_unique(where={"id": session_id})
     if not session or session.revokedAt or session.expiresAt < utc_now() or session.refreshTokenHash != token_hash(refresh_secret):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
-    access = create_jwt(user_id=session.userId, token_type="access", expires_delta=timedelta(minutes=get_settings().access_token_minutes))
-    _set_cookie(response, "access_token", access, get_settings().access_token_minutes * 60)
+    # Send a new access token (also 3 hours)
+    access_expires = timedelta(minutes=180)
+    access = create_jwt(user_id=session.userId, token_type="access", expires_delta=access_expires)
+    _set_cookie(response, "access_token", access, int(access_expires.total_seconds()))
     await db.devicesession.update(where={"id": session.id}, data={"lastSeenAt": utc_now()})
     return OkResponse()
 

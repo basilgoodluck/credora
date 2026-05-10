@@ -1,3 +1,9 @@
+FROM credit_quotient-base
+
+COPY prisma /app/prisma
+RUN prisma generate --schema=prisma/schema.prisma
+COPY worker /app/worker
+
 FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/app
@@ -9,32 +15,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && apt-get install -y nodejs \
  && rm -rf /var/lib/apt/lists/*
 
-# Install torch separately BEFORE requirements.txt
-# This avoids pip pulling nvidia-* CUDA packages from PyPI (which are huge and cause timeouts)
-#
-# --index-url tells pip where to get torch from:
-#
-#   CPU only (current - for local dev and AMD cloud until you get access):
-#     https://download.pytorch.org/whl/cpu
-#     ~200MB, no GPU support, works fine for development
-#
-#   When you get AMD cloud access, swap the index URL to ROCm:
-#     https://download.pytorch.org/whl/rocm6.1   (check your ROCm version with: rocm-smi --version)
-#     https://download.pytorch.org/whl/rocm6.2
-#
-#   If you ever switch to NVIDIA GPU:
-#     https://download.pytorch.org/whl/cu118   (CUDA 11.8)
-#     https://download.pytorch.org/whl/cu124   (CUDA 12.4)
-#
-# The app code already handles GPU/CPU automatically:
-#   device = 0 if torch.cuda.is_available() else -1
-# So no code changes needed when you switch — just rebuild the image with the new index URL.
-
-RUN pip install torch==2.5.1+cpu \
-    --index-url https://download.pytorch.org/whl/cpu \
-    --no-cache-dir \
-    --disable-pip-version-check
+# Install torch with ROCm support for AMD GPU (adjust index URL to your ROCm version)
+# Check ROCm version on host: rocm-smi --version
+# For ROCm 6.1 use: --index-url https://download.pytorch.org/whl/rocm6.1
+RUN pip install torch==2.5.1 --index-url https://download.pytorch.org/whl/rocm6.1 --no-cache-dir --disable-pip-version-check
 
 COPY shared /app/shared
 COPY requirements.txt /app/requirements.txt
-RUN pip install --timeout=600 --retries=5 -e /app/shared -r /app/requirements.txt
+RUN pip install --timeout=600 --retries=5 -e /app/shared -r /app/requirements.txt httpx
+
+# Ensure vLLM and transformers are installed (vLLM requires torch already)
+RUN pip install vllm==0.6.3.post1 transformers accelerate
+
+CMD ["celery", "-A", "worker.queue.celery_app.celery_app", "worker", "--loglevel=INFO", "--concurrency=1"]

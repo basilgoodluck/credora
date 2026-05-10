@@ -1,4 +1,5 @@
 import hashlib
+import prisma  # <-- ADDED
 from pathlib import Path
 
 from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile, status
@@ -97,7 +98,7 @@ async def upload_evidence(
     async with db.tx() as tx:
         evidence = await tx.evidencerecord.create(
             data={
-                "userId": user_id,
+                "user": {"connect": {"id": user_id}},
                 "status": EvidenceStatus.PENDING.value,
                 "originalFilename": filename,
                 "mimeType": mime_type,
@@ -105,15 +106,15 @@ async def upload_evidence(
                 "fileSha256": file_hash,
                 "rawText": None,
                 "note": clean_note,
-                "validationFlags": [],
-                "fraudFlags": [],
+                "validationFlags": prisma.Json([]),   # FIXED
+                "fraudFlags": prisma.Json([]),        # FIXED
             }
         )
         storage_key = await _store_private(user_id, evidence.id, filename, file_bytes)
         evidence = await tx.evidencerecord.update(where={"id": evidence.id}, data={"storageKey": storage_key})
         job = await tx.jobstatus.create(
             data={
-                "userId": user_id,
+                "userId": user_id,   # FIXED: use scalar, not relation
                 "evidenceId": evidence.id,
                 "type": JobType.PROCESS_EVIDENCE.value,
                 "status": JobStatus.PENDING.value,
